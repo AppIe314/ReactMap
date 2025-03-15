@@ -103,7 +103,19 @@
       },
       {
         "role": "897581458191",
-        "name": "supporter"
+        "name": "supporter-bronze"
+      },
+      {
+        "role": "897581458192",
+        "name": "supporter-silver"
+      },
+      {
+        "role": "897581458193",
+        "name": "supporter-gold"
+      },
+      {
+        "role": ["supporter-bronze", "supporter-silver", "supporter-gold"],
+        "name": "supporters"
       }
     ],
     "alwaysEnabledPerms": [],
