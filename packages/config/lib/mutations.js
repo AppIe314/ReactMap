@@ -23,7 +23,7 @@ const applyMutations = (config) => {
 
   if (process.env.NODE_CONFIG_ENV) {
     if (firstRun)
-      log.warning(TAGS.config, `Using config for ${process.env.NODE_CONFIG_ENV}`)
+      log.warn(TAGS.config, `Using config for ${process.env.NODE_CONFIG_ENV}`)
   }
   const [rootConfigDir, serverConfigDir] = (
     process.env.NODE_CONFIG_DIR || ''
@@ -284,23 +284,23 @@ const applyMutations = (config) => {
   
   /** @param {string | string[]} role */
   const replaceAliases = (role) => {
-    log.warning(TAGS.config, `Processing role: ${role}`)
+    log.warn(TAGS.config, `Processing role: ${role}`)
     if (Array.isArray(role)) {
       const resolvedRoles = role.flatMap((r) => {
         const resolved = aliasObj[r] ?? r;
-        log.warning(TAGS.config, `Resolved role "${r}" to: ${resolved}`)
+        log.warn(TAGS.config, `Resolved role "${r}" to: ${resolved}`)
         return resolved
       });
-      log.warning(TAGS.config, `Resolved roles (array): ${resolvedRoles}`)
+      log.warn(TAGS.config, `Resolved roles (array): ${resolvedRoles}`)
       return resolvedRoles
     }
     const resolvedRole = aliasObj[role] ?? role
-    log.warning(TAGS.config, `Resolved role "${role}" to ${resolvedRole}`)
+    log.warn(TAGS.config, `Resolved role "${role}" to ${resolvedRole}`)
     return resolvedRole
   }
 
   const replaceBothAliases = (incomingObj) => {
-    log.warning(TAGS.config, `Processing incoming object:, ${incomingObj}`)
+    log.warn(TAGS.config, `Processing incoming object:, ${incomingObj}`)
     const result = {
       ...incomingObj,
       discordRoles: Array.isArray(incomingObj.discordRoles)
@@ -310,15 +310,15 @@ const applyMutations = (config) => {
         ? incomingObj.telegramGroups.flatMap(replaceAliases)
         : undefined,
     };
-    log.warning(TAGS.config, `Processed object:", ${result}`)
+    log.warn(TAGS.config, `Processed object:", ${result}`)
     return result
   }
 
   Object.keys(config.authentication.perms).forEach((perm) => {
-    log.warning(TAGS.config, `Processing permissions for: ${perm}`);
+    log.warn(TAGS.config, `Processing permissions for: ${perm}`);
     config.authentication.perms[perm].roles =
       config.authentication.perms[perm].roles.flatMap(replaceAliases);
-    log.warning(TAGS.config, `Resolved roles for ${perm}: ${config.authentication.perms[perm].roles}`);
+    log.warn(TAGS.config, `Resolved roles for ${perm}: ${config.authentication.perms[perm].roles}`);
   })
 
   config.authentication.areaRestrictions =
