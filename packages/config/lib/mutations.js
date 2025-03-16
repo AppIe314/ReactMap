@@ -275,15 +275,18 @@ const applyMutations = (config) => {
   }
 
   const aliasObj = Object.fromEntries(
-    config.authentication.aliases.flatMap((alias) =>
-      Array.isArray(alias.role)
-        ? alias.role.map((role) => [role, alias.name])
-        : [[alias.role, alias.name]],
-    ),
-  )
+    config.authentication.aliases.flatMap((alias) => {
+      if (Array.isArray(alias.role)) {
+        return alias.role.map((role) => [role, alias.name]);
+      }
+      return [[alias.role, alias.name]];
+    }),
+  );
+  
   
   /** @param {string | string[]} role */
   const replaceAliases = (role) => {
+    log.warn(TAGS.config, `aliasObj:, ${aliasObj}`); 
     log.warn(TAGS.config, `Processing role: ${role}`)
     if (Array.isArray(role)) {
       const resolvedRoles = role.flatMap((r) => {
