@@ -283,24 +283,42 @@ const applyMutations = (config) => {
   )
   
   /** @param {string | string[]} role */
-  const replaceAliases = (role) =>
-    Array.isArray(role)
-      ? role.flatMap((r) => aliasObj[r] ?? r)
-      : aliasObj[role] ?? role
+  const replaceAliases = (role) => {
+    log.info(TAGS.config, `Processing role: ${role}`)
+    if (Array.isArray(role)) {
+      const resolvedRoles = role.flatMap((r) => {
+        const resolved = aliasObj[r] ?? r;
+        log.info(TAGS.config, `Resolved role "${r}" to: ${resolved}`)
+        return resolved
+      });
+      log.info(TAGS.config, `Resolved roles (array): ${resolvedRoles}`)
+      return resolvedRoles
+    }
+    const resolvedRole = aliasObj[role] ?? role
+    log.info(TAGS.config, `Resolved role "${role}" to ${resolvedRole}`)
+    return resolvedRole
+  }
 
-  const replaceBothAliases = (incomingObj) => ({
-    ...incomingObj,
-    discordRoles: Array.isArray(incomingObj.discordRoles)
-      ? incomingObj.discordRoles.flatMap(replaceAliases)
-      : undefined,
-    telegramGroups: Array.isArray(incomingObj.telegramGroups)
-      ? incomingObj.telegramGroups.flatMap(replaceAliases)
-      : undefined,
-  })
+  const replaceBothAliases = (incomingObj) => {
+    log.info(TAGS.config, `Processing incoming object:, ${incomingObj}`)
+    const result = {
+      ...incomingObj,
+      discordRoles: Array.isArray(incomingObj.discordRoles)
+        ? incomingObj.discordRoles.flatMap(replaceAliases)
+        : undefined,
+      telegramGroups: Array.isArray(incomingObj.telegramGroups)
+        ? incomingObj.telegramGroups.flatMap(replaceAliases)
+        : undefined,
+    };
+    log.info(TAGS.config, `Processed object:", ${result}`)
+    return result
+  }
 
   Object.keys(config.authentication.perms).forEach((perm) => {
+    log.info(TAGS.config, `Processing permissions for: ${perm}`);
     config.authentication.perms[perm].roles =
       config.authentication.perms[perm].roles.flatMap(replaceAliases);
+    log.info(TAGS.config, `Resolved roles for ${perm}: ${config.authentication.perms[perm].roles}`);
   })
 
   config.authentication.areaRestrictions =
