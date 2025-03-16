@@ -275,30 +275,30 @@ const applyMutations = (config) => {
   }
 
   const aliasObj = Object.fromEntries(
-    config.authentication.aliases.flatMap((alias) => {
-      if (Array.isArray(alias.role)) {
-        return alias.role.map((role) => [role, alias.name]);
-      }
-      return [[alias.role, alias.name]];
-    }),
-  );
+    config.authentication.aliases.flatMap((alias) =>
+      Array.isArray(alias.role)
+        ? alias.role.map((role) => [role, alias.name])
+        : [[alias.role, alias.name]],
+    ),
+  )
   
   
   /** @param {string | string[]} role */
-  const replaceAliases = (role) => {
-    log.warn(TAGS.config, `aliasObj:, ${JSON.stringify(aliasObj, null, 2)}`); 
-    log.warn(TAGS.config, `Processing role: ${role}`)
+  const replaceAliases = (role) => {  
+    const resolveRole = (r) => {
+      const resolved = aliasObj[r] ?? r;
+      return resolved === r ? resolved : resolveRole(resolved);
+    }
+  
     if (Array.isArray(role)) {
       const resolvedRoles = role.flatMap((r) => {
-        const resolved = aliasObj[r] ?? r;
-        log.warn(TAGS.config, `Resolved role "${r}" to: ${resolved}`)
+        const resolved = resolveRole(r)
         return resolved
       });
-      log.warn(TAGS.config, `Resolved roles (array): ${resolvedRoles}`)
       return resolvedRoles
     }
-    const resolvedRole = aliasObj[role] ?? role
-    log.warn(TAGS.config, `Resolved role "${role}" to ${resolvedRole}`)
+  
+    const resolvedRole = resolveRole(role);
     return resolvedRole
   }
 
