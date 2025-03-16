@@ -284,23 +284,29 @@ const applyMutations = (config) => {
   
   
   /** @param {string | string[]} role */
-  const replaceAliases = (role) => {  
+  const replaceAliases = (role) => {
+    log.warn(TAGS.config, `Processing role: ${role}`); // Log the input role
+  
     const resolveRole = (r) => {
       const resolved = aliasObj[r] ?? r;
+      log.warn(TAGS.config, `Resolved role "${r}" to: ${resolved}`); // Log each resolved role
+      // If the resolved role is still an alias, resolve it recursively
       return resolved === r ? resolved : resolveRole(resolved);
-    }
+    };
   
     if (Array.isArray(role)) {
       const resolvedRoles = role.flatMap((r) => {
-        const resolved = resolveRole(r)
-        return resolved
+        const resolved = resolveRole(r);
+        return resolved;
       });
-      return resolvedRoles
+      log.warn(TAGS.config, `Resolved roles (array): ${resolvedRoles}`); // Log the final resolved roles
+      return resolvedRoles;
     }
   
     const resolvedRole = resolveRole(role);
-    return resolvedRole
-  }
+    console.log(`Resolved role "${role}" to: ${resolvedRole}`); // Log the resolved role
+    return resolvedRole;
+  };
 
   const replaceBothAliases = (incomingObj) => {
     log.warn(TAGS.config, `Processing incoming object:, ${incomingObj}`)
