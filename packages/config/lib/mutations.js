@@ -286,7 +286,7 @@ const applyMutations = (config) => {
   
   /** @param {string | string[]} role */
   const replaceAliases = (role) => {
-    log.warn(TAGS.config, `aliasObj:, ${aliasObj}`); 
+    log.warn(TAGS.config, `aliasObj:, ${JSON.stringify(aliasObj, null, 2)}`); 
     log.warn(TAGS.config, `Processing role: ${role}`)
     if (Array.isArray(role)) {
       const resolvedRoles = role.flatMap((r) => {
